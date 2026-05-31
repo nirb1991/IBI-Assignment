@@ -9,5 +9,4 @@ import Foundation
 
 struct UserSession: Codable, Equatable {
     let username: String
-    let isLoggedIn: Bool
 }
