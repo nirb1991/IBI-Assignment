@@ -8,7 +8,7 @@
 import Foundation
 
 protocol FavoritesRepository {
-    func getFavoriteProductIDs() async -> Set<Int>
-    func addToFavorites(productID: Int) async
-    func removeFromFavorites(productID: Int) async
+    func favoriteProductIDs() async -> Set<Int>
+    func addFavorite(productID: Int) async
+    func removeFavorite(productID: Int) async
 }
