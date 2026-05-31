@@ -1,0 +1,101 @@
+"app.restoringSession" = "Restoring session";
+
+"common.cancel" = "Cancel";
+"common.create" = "Create";
+"common.delete" = "Delete";
+"common.edit" = "Edit";
+"common.reset" = "Reset";
+"common.retry" = "Retry";
+"common.save" = "Save";
+"common.undo" = "Undo";
+"common.unknown" = "Unknown";
+
+"settings.title" = "Settings";
+"settings.appearance" = "Appearance";
+"settings.appearance.system" = "System";
+"settings.appearance.light" = "Light";
+"settings.appearance.dark" = "Dark";
+"settings.language" = "Language";
+"settings.language.english" = "English";
+"settings.language.hebrew" = "Hebrew";
+"settings.logout" = "Logout";
+
+"login.title" = "Login";
+"login.username" = "Username";
+"login.password" = "Password";
+"login.button" = "Login";
+"login.biometricButton" = "Login with Face ID / Touch ID";
+"login.welcome" = "Welcome Back";
+"login.subtitle" = "Sign in to manage products";
+"login.noSavedSession" = "No saved session found. Please login with username and password.";
+
+"unlock.title" = "Unlock Session";
+"unlock.subtitle" = "Use Face ID or Touch ID to unlock your saved login.";
+"unlock.button" = "Unlock with Face ID / Touch ID";
+"unlock.usePassword" = "Use password instead";
+
+"biometric.reason" = "Authenticate to continue";
+
+"products.title" = "Products";
+"products.search.placeholder" = "Search products";
+"products.create.accessibility" = "Create product";
+"products.delete.confirmation.title" = "Delete product?";
+"products.delete.confirmation.message" = "This only deletes the locally cached product.";
+"products.reset.confirmation.title" = "Reset local changes?";
+"products.reset.confirmation.message" = "Local product edits, additions, and deletions will be replaced with the latest API data.";
+"products.reset.loading" = "Resetting products";
+"products.sort.accessibility" = "Sort products";
+"products.filter.accessibility" = "Filter by category";
+"products.reset.accessibility" = "Reset local product changes";
+"products.loading" = "Loading products";
+"products.error.title" = "Unable to load products";
+"products.empty.title" = "No products found";
+"products.empty.description" = "Try a different search or category.";
+"products.sort.title" = "Title";
+"products.sort.price" = "Price";
+"products.sort.rating" = "Rating";
+"products.filter.all" = "All Categories";
+
+"favorites.title" = "Favorites";
+"favorites.remove" = "Remove";
+"favorites.removed" = "Removed %@";
+"favorites.dismissUndo.accessibility" = "Dismiss undo";
+"favorites.loading" = "Loading favorites";
+"favorites.error.title" = "Unable to load favorites";
+"favorites.empty.title" = "No favorites yet";
+"favorites.empty.description" = "Favorite products from the details screen.";
+
+"productForm.create.title" = "Create Product";
+"productForm.edit.title" = "Edit Product";
+"productForm.section.product" = "Product";
+"productForm.section.pricing" = "Pricing and Rating";
+"productForm.section.images" = "Images";
+"productForm.title" = "Title";
+"productForm.description" = "Description";
+"productForm.category" = "Category";
+"productForm.brand" = "Brand";
+"productForm.price" = "Price";
+"productForm.rating" = "Rating";
+"productForm.thumbnail" = "Thumbnail URL";
+"productForm.images" = "Image URLs, one per line";
+"productForm.validation.titleRequired" = "Title is required.";
+"productForm.validation.descriptionRequired" = "Description is required.";
+"productForm.validation.validPrice" = "Enter a valid price.";
+"productForm.validation.categoryRequired" = "Category is required.";
+"productForm.validation.ratingRange" = "Rating must be between 0 and 5.";
+"productForm.validation.thumbnailRequired" = "Thumbnail URL is required.";
+
+"productDetails.title" = "Product Details";
+"productDetails.price" = "Price";
+"productDetails.category" = "Category";
+"productDetails.brand" = "Brand";
+"productDetails.rating" = "Rating";
+"productDetails.addFavorite" = "Add to Favorites";
+"productDetails.removeFavorite" = "Remove from Favorites";
+
+"auth.error.invalidCredentials" = "Invalid username or password.";
+"auth.error.sessionStorageFailed" = "Unable to save the user session.";
+"auth.error.sessionRestoreFailed" = "Unable to restore the user session.";
+
+"productRepository.error.alreadyExists" = "A product with this ID already exists.";
+"productRepository.error.notFound" = "The product could not be found.";

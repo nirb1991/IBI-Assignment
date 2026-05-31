@@ -30,8 +30,8 @@ struct ProductsListView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("Products")
-                .searchable(text: $viewModel.searchText, prompt: "Search products")
+                .navigationTitle(L10n.tr("products.title"))
+                .searchable(text: $viewModel.searchText, prompt: Text(L10n.tr("products.search.placeholder")))
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
@@ -39,15 +39,15 @@ struct ProductsListView: View {
                         } label: {
                             Image(systemName: "plus")
                         }
-                        .accessibilityLabel("Create product")
+                        .accessibilityLabel(Text(L10n.tr("products.create.accessibility")))
                     }
 
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         favoritesLink
-                        settingsLink
                         categoryFilterMenu
                         sortMenu
                         resetButton
+                        settingsLink
                     }
                 }
                 .sheet(isPresented: $isCreateProductPresented) {
@@ -57,14 +57,14 @@ struct ProductsListView: View {
                     ProductFormView(viewModel: viewModel.makeEditProductViewModel(for: product))
                 }
                 .confirmationDialog(
-                    "Delete product?",
+                    L10n.tr("products.delete.confirmation.title"),
                     isPresented: Binding(
                         get: { productToDelete != nil },
                         set: { if !$0 { productToDelete = nil } }
                     ),
                     titleVisibility: .visible
                 ) {
-                    Button("Delete", role: .destructive) {
+                    Button(L10n.tr("common.delete"), role: .destructive) {
                         guard let productToDelete else { return }
 
                         Task {
@@ -73,26 +73,26 @@ struct ProductsListView: View {
                         }
                     }
 
-                    Button("Cancel", role: .cancel) {
+                    Button(L10n.tr("common.cancel"), role: .cancel) {
                         productToDelete = nil
                     }
                 } message: {
-                    Text("This only deletes the locally cached product.")
+                    Text(L10n.tr("products.delete.confirmation.message"))
                 }
                 .confirmationDialog(
-                    "Reset local changes?",
+                    L10n.tr("products.reset.confirmation.title"),
                     isPresented: $isResetConfirmationPresented,
                     titleVisibility: .visible
                 ) {
-                    Button("Reset", role: .destructive) {
+                    Button(L10n.tr("common.reset"), role: .destructive) {
                         Task {
                             await viewModel.resetLocalChangesFromAPI()
                         }
                     }
 
-                    Button("Cancel", role: .cancel) {}
+                    Button(L10n.tr("common.cancel"), role: .cancel) {}
                 } message: {
-                    Text("Local product edits, additions, and deletions will be replaced with the latest API data.")
+                    Text(L10n.tr("products.reset.confirmation.message"))
                 }
                 .task {
                     if viewModel.products.isEmpty {
@@ -133,13 +133,13 @@ struct ProductsListView: View {
                         Button(role: .destructive) {
                             productToDelete = product
                         } label: {
-                            Label("Delete", systemImage: "trash")
+                            Label(L10n.tr("common.delete"), systemImage: "trash")
                         }
 
                         Button {
                             productToEdit = product
                         } label: {
-                            Label("Edit", systemImage: "pencil")
+                            Label(L10n.tr("common.edit"), systemImage: "pencil")
                         }
                         .tint(.blue)
                     }
@@ -165,7 +165,7 @@ struct ProductsListView: View {
             }
             .overlay {
                 if viewModel.isResetting {
-                    ProgressView("Resetting products")
+                    ProgressView(L10n.tr("products.reset.loading"))
                         .padding()
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
                 }
@@ -179,16 +179,16 @@ struct ProductsListView: View {
                 Button {
                     viewModel.setSortOption(option)
                 } label: {
-                    Label(
-                        option.title,
-                        systemImage: viewModel.sortOption == option ? "checkmark" : ""
+                    MenuOptionLabel(
+                        title: option.title,
+                        isSelected: viewModel.sortOption == option
                     )
                 }
             }
         } label: {
             Image(systemName: "arrow.up.arrow.down")
         }
-        .accessibilityLabel("Sort products")
+        .accessibilityLabel(Text(L10n.tr("products.sort.accessibility")))
     }
 
     private var favoritesLink: some View {
@@ -202,7 +202,7 @@ struct ProductsListView: View {
         } label: {
             Image(systemName: "heart")
         }
-        .accessibilityLabel("Favorites")
+        .accessibilityLabel(Text(L10n.tr("favorites.title")))
     }
 
     private var settingsLink: some View {
@@ -213,7 +213,7 @@ struct ProductsListView: View {
         } label: {
             Image(systemName: "gearshape")
         }
-        .accessibilityLabel("Settings")
+        .accessibilityLabel(Text(L10n.tr("settings.title")))
     }
 
     private var categoryFilterMenu: some View {
@@ -222,16 +222,16 @@ struct ProductsListView: View {
                 Button {
                     viewModel.setFilterOption(option)
                 } label: {
-                    Label(
-                        option.title,
-                        systemImage: viewModel.filterOption == option ? "checkmark" : ""
+                    MenuOptionLabel(
+                        title: option.title,
+                        isSelected: viewModel.filterOption == option
                     )
                 }
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease.circle")
         }
-        .accessibilityLabel("Filter by category")
+        .accessibilityLabel(Text(L10n.tr("products.filter.accessibility")))
     }
 
     private var resetButton: some View {
@@ -241,7 +241,20 @@ struct ProductsListView: View {
             Image(systemName: "arrow.clockwise")
         }
         .disabled(viewModel.isResetting)
-        .accessibilityLabel("Reset local product changes")
+        .accessibilityLabel(Text(L10n.tr("products.reset.accessibility")))
+    }
+}
+
+private struct MenuOptionLabel: View {
+    let title: String
+    let isSelected: Bool
+
+    var body: some View {
+        if isSelected {
+            Label(title, systemImage: "checkmark")
+        } else {
+            Text(title)
+        }
     }
 }
 
@@ -289,7 +302,7 @@ private struct LoadingStateView: View {
     var body: some View {
         VStack(spacing: 12) {
             ProgressView()
-            Text("Loading products")
+            Text(L10n.tr("products.loading"))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -302,11 +315,11 @@ private struct ErrorStateView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("Unable to load products", systemImage: "exclamationmark.triangle")
+            Label(L10n.tr("products.error.title"), systemImage: "exclamationmark.triangle")
         } description: {
             Text(message)
         } actions: {
-            Button("Retry", action: retry)
+            Button(L10n.tr("common.retry"), action: retry)
         }
     }
 }
@@ -314,9 +327,9 @@ private struct ErrorStateView: View {
 private struct EmptyProductsStateView: View {
     var body: some View {
         ContentUnavailableView(
-            "No products found",
+            L10n.tr("products.empty.title"),
             systemImage: "magnifyingglass",
-            description: Text("Try a different search or category.")
+            description: Text(L10n.tr("products.empty.description"))
         )
     }
 }
@@ -339,11 +352,11 @@ private extension SortOption {
     var title: String {
         switch self {
         case .title:
-            return "Title"
+            return L10n.tr("products.sort.title")
         case .price:
-            return "Price"
+            return L10n.tr("products.sort.price")
         case .rating:
-            return "Rating"
+            return L10n.tr("products.sort.rating")
         }
     }
 }
@@ -352,7 +365,7 @@ private extension FilterOption {
     var title: String {
         switch self {
         case .all:
-            return "All Categories"
+            return L10n.tr("products.filter.all")
         case .category(let category):
             return category.capitalized
         }

@@ -30,11 +30,11 @@ struct LoginView: View {
 
                 Form {
                     Section {
-                        TextField("Username", text: $username)
+                        TextField(L10n.tr("login.username"), text: $username)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
 
-                        SecureField("Password", text: $password)
+                        SecureField(L10n.tr("login.password"), text: $password)
                     }
 
                     if let message = appState.authenticationError?.localizedDescription ?? biometricErrorMessage {
@@ -53,13 +53,13 @@ struct LoginView: View {
                             if appState.isLoading {
                                 ProgressView()
                             } else {
-                                Text("Login")
+                                Text(L10n.tr("login.button"))
                             }
                         }
                         .disabled(!canSubmit)
 
                         if showsBiometricLogin, biometricAuthService.canAuthenticate() {
-                            Button("Login with Face ID / Touch ID") {
+                            Button(L10n.tr("login.biometricButton")) {
                                 Task {
                                     await authenticateWithBiometrics()
                                 }
@@ -69,7 +69,7 @@ struct LoginView: View {
                     }
                 }
             }
-            .navigationTitle("Login")
+            .navigationTitle(L10n.tr("login.title"))
             .onAppear {
                 withAnimation(.spring(response: 0.55, dampingFraction: 0.78)) {
                     didAnimateHeader = true
@@ -86,11 +86,11 @@ struct LoginView: View {
                 .scaleEffect(didAnimateHeader ? 1 : 0.82)
                 .opacity(didAnimateHeader ? 1 : 0)
 
-            Text("Welcome Back")
+            Text(L10n.tr("login.welcome"))
                 .font(.title2.weight(.semibold))
                 .opacity(didAnimateHeader ? 1 : 0)
 
-            Text("Sign in to manage products")
+            Text(L10n.tr("login.subtitle"))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .opacity(didAnimateHeader ? 1 : 0)
@@ -109,7 +109,7 @@ struct LoginView: View {
             await appState.restoreSession()
 
             if !appState.isAuthenticated {
-                biometricErrorMessage = "No saved session found. Please login with username and password."
+                biometricErrorMessage = L10n.tr("login.noSavedSession")
             }
         } catch {
             biometricErrorMessage = error.localizedDescription
@@ -120,6 +120,7 @@ struct LoginView: View {
 struct BiometricUnlockView: View {
     @ObservedObject var appState: AppState
     let biometricAuthService: BiometricAuthService
+    let usePasswordInstead: () -> Void
 
     @State private var errorMessage: String?
     @State private var isUnlocking = false
@@ -136,10 +137,10 @@ struct BiometricUnlockView: View {
                     .scaleEffect(didAnimate ? 1 : 0.86)
                     .opacity(didAnimate ? 1 : 0)
 
-                Text("Unlock Session")
+                Text(L10n.tr("unlock.title"))
                     .font(.title2.weight(.semibold))
 
-                Text("Use Face ID or Touch ID to unlock your saved login.")
+                Text(L10n.tr("unlock.subtitle"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -161,11 +162,16 @@ struct BiometricUnlockView: View {
                 if isUnlocking || appState.isLoading {
                     ProgressView()
                 } else {
-                    Text("Unlock with Face ID / Touch ID")
+                    Text(L10n.tr("unlock.button"))
                 }
             }
             .buttonStyle(.borderedProminent)
             .disabled(isUnlocking || appState.isLoading || !biometricAuthService.canAuthenticate())
+
+            Button(L10n.tr("unlock.usePassword")) {
+                usePasswordInstead()
+            }
+            .disabled(isUnlocking || appState.isLoading)
 
             Spacer()
         }
@@ -186,7 +192,7 @@ struct BiometricUnlockView: View {
             await appState.restoreSession()
 
             if !appState.isAuthenticated {
-                errorMessage = "No saved session found. Please login with username and password."
+                errorMessage = L10n.tr("login.noSavedSession")
             }
         } catch {
             errorMessage = error.localizedDescription

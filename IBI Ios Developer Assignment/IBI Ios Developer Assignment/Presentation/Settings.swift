@@ -37,6 +37,24 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     var id: String {
         rawValue
     }
+
+    var localizationCode: String {
+        switch self {
+        case .english:
+            return "en"
+        case .hebrew:
+            return "he"
+        }
+    }
+
+    var localeIdentifier: String {
+        switch self {
+        case .english:
+            return "en_US"
+        case .hebrew:
+            return "he_IL"
+        }
+    }
 }
 
 @MainActor
@@ -61,10 +79,6 @@ struct SettingsView: View {
     @AppStorage("app_appearance") private var appearanceRawValue = AppAppearance.system.rawValue
     @AppStorage("app_language") private var languageRawValue = AppLanguage.english.rawValue
 
-    private var language: AppLanguage {
-        AppLanguage(rawValue: languageRawValue) ?? .english
-    }
-
     private var appearance: Binding<AppAppearance> {
         Binding {
             AppAppearance(rawValue: appearanceRawValue) ?? .system
@@ -87,20 +101,20 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Section(localized(.appearance)) {
-                Picker(localized(.appearance), selection: appearance) {
+            Section(L10n.tr("settings.appearance")) {
+                Picker(L10n.tr("settings.appearance"), selection: appearance) {
                     ForEach(AppAppearance.allCases) { option in
-                        Text(option.localizedTitle(language: language))
+                        Text(option.localizedTitle)
                             .tag(option)
                     }
                 }
                 .pickerStyle(.segmented)
             }
 
-            Section(localized(.language)) {
-                Picker(localized(.language), selection: selectedLanguage) {
+            Section(L10n.tr("settings.language")) {
+                Picker(L10n.tr("settings.language"), selection: selectedLanguage) {
                     ForEach(AppLanguage.allCases) { option in
-                        Text(option.localizedTitle(language: language))
+                        Text(option.localizedTitle)
                             .tag(option)
                     }
                 }
@@ -115,78 +129,36 @@ struct SettingsView: View {
                     if viewModel.isLoggingOut {
                         ProgressView()
                     } else {
-                        Text(localized(.logout))
+                        Text(L10n.tr("settings.logout"))
                     }
                 }
                 .disabled(viewModel.isLoggingOut)
             }
         }
-        .navigationTitle(localized(.settings))
-    }
-
-    private func localized(_ key: SettingsTextKey) -> String {
-        key.title(language: language)
-    }
-}
-
-private enum SettingsTextKey {
-    case settings
-    case appearance
-    case language
-    case logout
-
-    func title(language: AppLanguage) -> String {
-        switch (self, language) {
-        case (.settings, .english):
-            return "Settings"
-        case (.settings, .hebrew):
-            return "הגדרות"
-        case (.appearance, .english):
-            return "Appearance"
-        case (.appearance, .hebrew):
-            return "מראה"
-        case (.language, .english):
-            return "Language"
-        case (.language, .hebrew):
-            return "שפה"
-        case (.logout, .english):
-            return "Logout"
-        case (.logout, .hebrew):
-            return "התנתקות"
-        }
+        .navigationTitle(L10n.tr("settings.title"))
     }
 }
 
 private extension AppAppearance {
-    func localizedTitle(language: AppLanguage) -> String {
-        switch (self, language) {
-        case (.system, .english):
-            return "System"
-        case (.system, .hebrew):
-            return "מערכת"
-        case (.light, .english):
-            return "Light"
-        case (.light, .hebrew):
-            return "בהיר"
-        case (.dark, .english):
-            return "Dark"
-        case (.dark, .hebrew):
-            return "כהה"
+    var localizedTitle: String {
+        switch self {
+        case .system:
+            return L10n.tr("settings.appearance.system")
+        case .light:
+            return L10n.tr("settings.appearance.light")
+        case .dark:
+            return L10n.tr("settings.appearance.dark")
         }
     }
 }
 
 private extension AppLanguage {
-    func localizedTitle(language: AppLanguage) -> String {
-        switch (self, language) {
-        case (.english, .english):
-            return "English"
-        case (.english, .hebrew):
-            return "אנגלית"
-        case (.hebrew, .english):
-            return "Hebrew"
-        case (.hebrew, .hebrew):
-            return "עברית"
+    var localizedTitle: String {
+        switch self {
+        case .english:
+            return L10n.tr("settings.language.english")
+        case .hebrew:
+            return L10n.tr("settings.language.hebrew")
         }
     }
 }

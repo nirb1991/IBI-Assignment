@@ -10,6 +10,7 @@ import SwiftUI
 struct RootView: View {
     @ObservedObject private var appState: AppState
     @AppStorage("app_appearance") private var appearanceRawValue = AppAppearance.system.rawValue
+    @AppStorage("app_language") private var languageRawValue = AppLanguage.english.rawValue
 
     private let dependencies: AppDependencies
 
@@ -30,7 +31,7 @@ struct RootView: View {
     var body: some View {
         Group {
             if !didFinishSessionRestore {
-                ProgressView("Restoring session")
+                ProgressView(L10n.tr("app.restoringSession"))
             } else if appState.isAuthenticated {
                 ProductsListView(
                     viewModel: dependencies.productsViewModel,
@@ -41,7 +42,9 @@ struct RootView: View {
                 BiometricUnlockView(
                     appState: appState,
                     biometricAuthService: dependencies.biometricAuthService
-                )
+                ) {
+                    hasSavedSession = false
+                }
             } else {
                 LoginView(
                     appState: appState,
@@ -63,5 +66,10 @@ struct RootView: View {
             }
         }
         .preferredColorScheme(selectedColorScheme)
+        .environment(\.layoutDirection, L10n.layoutDirection)
+        .id(languageRawValue)
     }
+}
+#Preview {
+    RootView(dependencies: AppDependencies())
 }

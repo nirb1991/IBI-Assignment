@@ -79,7 +79,7 @@ struct FavoritesView: View {
 
     var body: some View {
         content
-            .navigationTitle("Favorites")
+            .navigationTitle(L10n.tr("favorites.title"))
             .task {
                 await viewModel.loadFavorites()
             }
@@ -117,7 +117,7 @@ struct FavoritesView: View {
                             await viewModel.removeFavorite(product)
                         }
                     } label: {
-                        Label("Remove", systemImage: "heart.slash")
+                        Label(L10n.tr("favorites.remove"), systemImage: "heart.slash")
                     }
                 }
             }
@@ -186,19 +186,19 @@ private struct FavoriteUndoBanner: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text("Removed \(productTitle)")
+            Text(L10n.tr("favorites.removed", productTitle))
                 .font(.footnote)
                 .lineLimit(1)
 
             Spacer()
 
-            Button("Undo", action: undo)
+            Button(L10n.tr("common.undo"), action: undo)
                 .font(.footnote.weight(.semibold))
 
             Button(action: dismiss) {
                 Image(systemName: "xmark")
             }
-            .accessibilityLabel("Dismiss undo")
+            .accessibilityLabel(Text(L10n.tr("favorites.dismissUndo.accessibility")))
         }
         .foregroundStyle(.white)
         .padding(.horizontal, 12)
@@ -212,7 +212,7 @@ private struct FavoritesLoadingView: View {
     var body: some View {
         VStack(spacing: 12) {
             ProgressView()
-            Text("Loading favorites")
+            Text(L10n.tr("favorites.loading"))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -225,11 +225,11 @@ private struct FavoritesErrorView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("Unable to load favorites", systemImage: "exclamationmark.triangle")
+            Label(L10n.tr("favorites.error.title"), systemImage: "exclamationmark.triangle")
         } description: {
             Text(message)
         } actions: {
-            Button("Retry", action: retry)
+            Button(L10n.tr("common.retry"), action: retry)
         }
     }
 }
@@ -237,9 +237,9 @@ private struct FavoritesErrorView: View {
 private struct FavoritesEmptyView: View {
     var body: some View {
         ContentUnavailableView(
-            "No favorites yet",
+            L10n.tr("favorites.empty.title"),
             systemImage: "heart",
-            description: Text("Favorite products from the details screen.")
+            description: Text(L10n.tr("favorites.empty.description"))
         )
     }
 }

@@ -15,11 +15,11 @@ enum AuthenticationError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .invalidCredentials:
-            return "Invalid username or password."
+            return L10n.tr("auth.error.invalidCredentials")
         case .sessionStorageFailed:
-            return "Unable to save the user session."
+            return L10n.tr("auth.error.sessionStorageFailed")
         case .sessionRestoreFailed:
-            return "Unable to restore the user session."
+            return L10n.tr("auth.error.sessionRestoreFailed")
         }
     }
 }

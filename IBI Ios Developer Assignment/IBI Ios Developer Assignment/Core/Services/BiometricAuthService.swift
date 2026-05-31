@@ -16,7 +16,7 @@ struct BiometricAuthService {
     /// Creates an injectable biometric authentication service.
     init(
         contextFactory: @escaping () -> LAContext = { LAContext() },
-        reason: String = "Authenticate to continue"
+        reason: String = L10n.tr("biometric.reason")
     ) {
         self.contextFactory = contextFactory
         self.reason = reason

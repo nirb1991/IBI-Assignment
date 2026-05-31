@@ -52,7 +52,7 @@ final class ProductDetailsViewController: UIViewController {
 
     private func configureView() {
         view.backgroundColor = .systemBackground
-        title = "Product Details"
+        title = L10n.tr("productDetails.title")
     }
 
     private func configureHierarchy() {
@@ -116,10 +116,10 @@ final class ProductDetailsViewController: UIViewController {
         descriptionLabel.font = .preferredFont(forTextStyle: .body)
         descriptionLabel.numberOfLines = 0
 
-        priceLabel.attributedText = detailText(title: "Price", value: product.price.formatted(.currency(code: "USD")))
-        categoryLabel.attributedText = detailText(title: "Category", value: product.category.capitalized)
-        brandLabel.attributedText = detailText(title: "Brand", value: product.brand ?? "Unknown")
-        ratingLabel.attributedText = detailText(title: "Rating", value: product.rating.formatted(.number.precision(.fractionLength(1))))
+        priceLabel.attributedText = detailText(title: L10n.tr("productDetails.price"), value: product.price.formatted(.currency(code: "USD")))
+        categoryLabel.attributedText = detailText(title: L10n.tr("productDetails.category"), value: product.category.capitalized)
+        brandLabel.attributedText = detailText(title: L10n.tr("productDetails.brand"), value: product.brand ?? L10n.tr("common.unknown"))
+        ratingLabel.attributedText = detailText(title: L10n.tr("productDetails.rating"), value: product.rating.formatted(.number.precision(.fractionLength(1))))
 
         [priceLabel, categoryLabel, brandLabel, ratingLabel].forEach {
             $0.font = .preferredFont(forTextStyle: .subheadline)
@@ -179,7 +179,7 @@ final class ProductDetailsViewController: UIViewController {
 
     private func updateFavoriteButton(isFavorite: Bool) {
         var configuration = favoriteButton.configuration ?? .borderedProminent()
-        configuration.title = isFavorite ? "Remove from Favorites" : "Add to Favorites"
+        configuration.title = isFavorite ? L10n.tr("productDetails.removeFavorite") : L10n.tr("productDetails.addFavorite")
         configuration.image = UIImage(systemName: isFavorite ? "heart.fill" : "heart")
         configuration.imagePadding = 8
         favoriteButton.configuration = configuration

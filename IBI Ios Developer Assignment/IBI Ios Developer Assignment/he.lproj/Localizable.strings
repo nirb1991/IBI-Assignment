@@ -1,0 +1,101 @@
+"app.restoringSession" = "משחזר התחברות";
+
+"common.cancel" = "ביטול";
+"common.create" = "יצירה";
+"common.delete" = "מחיקה";
+"common.edit" = "עריכה";
+"common.reset" = "איפוס";
+"common.retry" = "ניסיון חוזר";
+"common.save" = "שמירה";
+"common.undo" = "ביטול פעולה";
+"common.unknown" = "לא ידוע";
+
+"settings.title" = "הגדרות";
+"settings.appearance" = "מראה";
+"settings.appearance.system" = "מערכת";
+"settings.appearance.light" = "בהיר";
+"settings.appearance.dark" = "כהה";
+"settings.language" = "שפה";
+"settings.language.english" = "אנגלית";
+"settings.language.hebrew" = "עברית";
+"settings.logout" = "התנתקות";
+
+"login.title" = "התחברות";
+"login.username" = "שם משתמש";
+"login.password" = "סיסמה";
+"login.button" = "התחברות";
+"login.biometricButton" = "התחברות עם Face ID / Touch ID";
+"login.welcome" = "ברוך שובך";
+"login.subtitle" = "התחבר כדי לנהל מוצרים";
+"login.noSavedSession" = "לא נמצא חיבור שמור. יש להתחבר עם שם משתמש וסיסמה.";
+
+"unlock.title" = "פתיחת חיבור";
+"unlock.subtitle" = "השתמש ב-Face ID או Touch ID כדי לפתוח את החיבור השמור.";
+"unlock.button" = "פתיחה עם Face ID / Touch ID";
+"unlock.usePassword" = "השתמש בסיסמה במקום";
+
+"biometric.reason" = "אמת את זהותך כדי להמשיך";
+
+"products.title" = "מוצרים";
+"products.search.placeholder" = "חיפוש מוצרים";
+"products.create.accessibility" = "יצירת מוצר";
+"products.delete.confirmation.title" = "למחוק מוצר?";
+"products.delete.confirmation.message" = "הפעולה תמחק רק את המוצר השמור מקומית.";
+"products.reset.confirmation.title" = "לאפס שינויים מקומיים?";
+"products.reset.confirmation.message" = "עריכות, הוספות ומחיקות מקומיות יוחלפו בנתוני ה-API העדכניים.";
+"products.reset.loading" = "מאפס מוצרים";
+"products.sort.accessibility" = "מיון מוצרים";
+"products.filter.accessibility" = "סינון לפי קטגוריה";
+"products.reset.accessibility" = "איפוס שינויים מקומיים במוצרים";
+"products.loading" = "טוען מוצרים";
+"products.error.title" = "לא ניתן לטעון מוצרים";
+"products.empty.title" = "לא נמצאו מוצרים";
+"products.empty.description" = "נסה חיפוש או קטגוריה אחרים.";
+"products.sort.title" = "שם";
+"products.sort.price" = "מחיר";
+"products.sort.rating" = "דירוג";
+"products.filter.all" = "כל הקטגוריות";
+
+"favorites.title" = "מועדפים";
+"favorites.remove" = "הסרה";
+"favorites.removed" = "%@ הוסר";
+"favorites.dismissUndo.accessibility" = "סגירת ביטול פעולה";
+"favorites.loading" = "טוען מועדפים";
+"favorites.error.title" = "לא ניתן לטעון מועדפים";
+"favorites.empty.title" = "אין מועדפים עדיין";
+"favorites.empty.description" = "ניתן לסמן מוצרים כמועדפים ממסך הפרטים.";
+
+"productForm.create.title" = "יצירת מוצר";
+"productForm.edit.title" = "עריכת מוצר";
+"productForm.section.product" = "מוצר";
+"productForm.section.pricing" = "מחיר ודירוג";
+"productForm.section.images" = "תמונות";
+"productForm.title" = "שם";
+"productForm.description" = "תיאור";
+"productForm.category" = "קטגוריה";
+"productForm.brand" = "מותג";
+"productForm.price" = "מחיר";
+"productForm.rating" = "דירוג";
+"productForm.thumbnail" = "כתובת תמונה ראשית";
+"productForm.images" = "כתובות תמונה, אחת בכל שורה";
+"productForm.validation.titleRequired" = "שם המוצר הוא שדה חובה.";
+"productForm.validation.descriptionRequired" = "תיאור הוא שדה חובה.";
+"productForm.validation.validPrice" = "יש להזין מחיר תקין.";
+"productForm.validation.categoryRequired" = "קטגוריה היא שדה חובה.";
+"productForm.validation.ratingRange" = "הדירוג חייב להיות בין 0 ל-5.";
+"productForm.validation.thumbnailRequired" = "כתובת תמונה ראשית היא שדה חובה.";
+
+"productDetails.title" = "פרטי מוצר";
+"productDetails.price" = "מחיר";
+"productDetails.category" = "קטגוריה";
+"productDetails.brand" = "מותג";
+"productDetails.rating" = "דירוג";
+"productDetails.addFavorite" = "הוספה למועדפים";
+"productDetails.removeFavorite" = "הסרה מהמועדפים";
+
+"auth.error.invalidCredentials" = "שם המשתמש או הסיסמה שגויים.";
+"auth.error.sessionStorageFailed" = "לא ניתן לשמור את החיבור.";
+"auth.error.sessionRestoreFailed" = "לא ניתן לשחזר את החיבור.";
+
+"productRepository.error.alreadyExists" = "כבר קיים מוצר עם מזהה זה.";
+"productRepository.error.notFound" = "המוצר לא נמצא.";

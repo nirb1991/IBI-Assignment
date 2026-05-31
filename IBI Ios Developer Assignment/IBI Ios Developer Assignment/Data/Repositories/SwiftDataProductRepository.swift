@@ -191,9 +191,9 @@ extension ProductRepositoryError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .productAlreadyExists:
-            return "A product with this ID already exists."
+            return L10n.tr("productRepository.error.alreadyExists")
         case .productNotFound:
-            return "The product could not be found."
+            return L10n.tr("productRepository.error.notFound")
         }
     }
 }

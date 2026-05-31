@@ -18,7 +18,7 @@ No third-party setup is required beyond Swift Package Manager resolving SnapKit.
 - Username: `admin`
 - Password: `1234`
 
-Biometric unlock is optional and only unlocks an existing Keychain-backed session. The first login must be done with username and password. On a later app launch with a saved session, the app shows an explicit biometric unlock screen instead of automatically entering the product list.
+Biometric unlock is optional and only unlocks an existing Keychain-backed session. The first login must be done with username and password. On a later app launch with a saved session, the app shows an explicit biometric unlock screen instead of automatically entering the product list, with a password-login fallback if the user does not want to use biometrics.
 
 ## Architecture
 
@@ -83,7 +83,7 @@ IBI Ios Developer Assignment
 - UIKit product details screen embedded in SwiftUI.
 - Favorites stored as product IDs only.
 - Favorites screen with remove and undo.
-- Settings screen for appearance, lightweight language selection, and logout.
+- Settings screen for appearance, English/Hebrew language selection, and logout.
 
 ## Technical Decisions
 
@@ -102,14 +102,14 @@ IBI Ios Developer Assignment
 - Authentication is intentionally mocked with fixed credentials.
 - Product create/edit/delete operations are local only.
 - Reset from API is the explicit way to discard local product changes.
-- Language switching is lightweight and currently localizes the Settings screen labels only.
+- Language switching uses English and Hebrew `Localizable.strings` files and is driven by the in-app language setting.
 - Favorites persistence via `UserDefaults` is sufficient because only integer IDs are stored.
 
 ## Tradeoffs
 
 - The app does not track per-product local modification flags. This keeps the data model simple, but means the repository treats reset as the explicit destructive sync operation.
 - Pagination and local CRUD share the same cache. API pages are upserted into SwiftData, while reset replaces the cache from all API pages.
-- Full app localization was not implemented to keep scope appropriate for the assignment.
+- Runtime language switching is implemented with a lightweight localization helper so the in-app language picker can update visible app strings without changing the device language.
 - The login UI uses lightweight SwiftUI animation instead of a custom animation framework.
 
 ## Known Limitations
@@ -117,8 +117,8 @@ IBI Ios Developer Assignment
 - Product CRUD changes are local only and are not sent to DummyJSON.
 - Search, sort, and filtering operate on products loaded so far.
 - Favorites can only display products currently available from the product repository/cache.
-- Language selection does not change system locale or localize the entire app.
-- Biometric unlock requires a previously stored Keychain session and is not available after logout until the user logs in again with username and password.
+- Language selection does not change the device locale; product data returned by the API remains in its original language.
+- Biometric unlock requires a previously stored Keychain session and is not available after logout until the user logs in again with username and password. Users can choose password login instead from the unlock screen.
 
 ## Testing Notes
 

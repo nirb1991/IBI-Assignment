@@ -1,5 +1,5 @@
 //
-//  ProductForm.swift
+//  ProductFormViewModel.swift
 //  IBI Ios Developer Assignment
 //
 //  Created by Nir Barzilay on 31/05/2026.
@@ -7,30 +7,6 @@
 
 import Foundation
 import Combine
-import SwiftUI
-
-enum ProductFormMode {
-    case create(nextID: Int)
-    case edit(Product)
-
-    var title: String {
-        switch self {
-        case .create:
-            return "Create Product"
-        case .edit:
-            return "Edit Product"
-        }
-    }
-
-    var submitTitle: String {
-        switch self {
-        case .create:
-            return "Create"
-        case .edit:
-            return "Save"
-        }
-    }
-}
 
 @MainActor
 final class ProductFormViewModel: ObservableObject {
@@ -119,33 +95,33 @@ final class ProductFormViewModel: ObservableObject {
             .filter { !$0.isEmpty }
 
         guard !trimmedTitle.isEmpty else {
-            errorMessage = "Title is required."
+            errorMessage = L10n.tr("productForm.validation.titleRequired")
             return nil
         }
 
         guard !trimmedDescription.isEmpty else {
-            errorMessage = "Description is required."
+            errorMessage = L10n.tr("productForm.validation.descriptionRequired")
             return nil
         }
 
-        guard let priceValue = Double(price.trimmed), priceValue >= 0 else {
-            errorMessage = "Enter a valid price."
+        guard let priceValue = Double(price.trimmed.replacingOccurrences(of: ",", with: "")), priceValue >= 0 else {
+            errorMessage = L10n.tr("productForm.validation.validPrice")
             return nil
         }
 
         guard !trimmedCategory.isEmpty else {
-            errorMessage = "Category is required."
+            errorMessage = L10n.tr("productForm.validation.categoryRequired")
             return nil
         }
 
         guard let ratingValue = Double(rating.trimmed),
               (0...5).contains(ratingValue) else {
-            errorMessage = "Rating must be between 0 and 5."
+            errorMessage = L10n.tr("productForm.validation.ratingRange")
             return nil
         }
 
         guard !trimmedThumbnail.isEmpty else {
-            errorMessage = "Thumbnail URL is required."
+            errorMessage = L10n.tr("productForm.validation.thumbnailRequired")
             return nil
         }
 
@@ -172,83 +148,6 @@ final class ProductFormViewModel: ObservableObject {
 
     private static func format(_ value: Double) -> String {
         value.formatted(.number.precision(.fractionLength(0...2)))
-    }
-}
-
-struct ProductFormView: View {
-    @StateObject private var viewModel: ProductFormViewModel
-    @Environment(\.dismiss) private var dismiss
-
-    init(viewModel: ProductFormViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Product") {
-                    TextField("Title", text: $viewModel.title)
-                    TextField("Description", text: $viewModel.description, axis: .vertical)
-                        .lineLimit(3...6)
-                    TextField("Category", text: $viewModel.category)
-                    TextField("Brand", text: $viewModel.brand)
-                }
-
-                Section("Pricing and Rating") {
-                    TextField("Price", text: $viewModel.price)
-                        .keyboardType(.decimalPad)
-                    TextField("Rating", text: $viewModel.rating)
-                        .keyboardType(.decimalPad)
-                }
-
-                Section("Images") {
-                    TextField("Thumbnail URL", text: $viewModel.thumbnail)
-                        .keyboardType(.URL)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                    TextField("Image URLs, one per line", text: $viewModel.images, axis: .vertical)
-                        .lineLimit(3...6)
-                        .keyboardType(.URL)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                }
-
-                if let errorMessage = viewModel.errorMessage {
-                    Section {
-                        Text(errorMessage)
-                            .foregroundStyle(.red)
-                    }
-                }
-            }
-            .navigationTitle(viewModel.mode.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                    .disabled(viewModel.isSaving)
-                }
-
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(viewModel.mode.submitTitle) {
-                        Task {
-                            if await viewModel.save() {
-                                dismiss()
-                            }
-                        }
-                    }
-                    .disabled(viewModel.isSaving)
-                }
-            }
-            .overlay {
-                if viewModel.isSaving {
-                    ProgressView()
-                        .padding()
-                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
-                }
-            }
-        }
     }
 }
 
