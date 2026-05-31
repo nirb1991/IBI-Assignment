@@ -14,6 +14,7 @@ struct LoginView: View {
     @State private var username = ""
     @State private var password = ""
     @State private var biometricErrorMessage: String?
+    @State private var didAnimateHeader = false
 
     private var canSubmit: Bool {
         !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -23,48 +24,80 @@ struct LoginView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    TextField("Username", text: $username)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
+            VStack(spacing: 0) {
+                loginHeader
 
-                    SecureField("Password", text: $password)
-                }
-
-                if let message = appState.authenticationError?.localizedDescription ?? biometricErrorMessage {
+                Form {
                     Section {
-                        Text(message)
-                            .foregroundStyle(.red)
-                    }
-                }
+                        TextField("Username", text: $username)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
 
-                Section {
-                    Button {
-                        Task {
-                            await appState.login(username: username, password: password)
-                        }
-                    } label: {
-                        if appState.isLoading {
-                            ProgressView()
-                        } else {
-                            Text("Login")
+                        SecureField("Password", text: $password)
+                    }
+
+                    if let message = appState.authenticationError?.localizedDescription ?? biometricErrorMessage {
+                        Section {
+                            Text(message)
+                                .foregroundStyle(.red)
                         }
                     }
-                    .disabled(!canSubmit)
 
-                    if biometricAuthService.canAuthenticate() {
-                        Button("Login with Face ID / Touch ID") {
+                    Section {
+                        Button {
                             Task {
-                                await authenticateWithBiometrics()
+                                await appState.login(username: username, password: password)
+                            }
+                        } label: {
+                            if appState.isLoading {
+                                ProgressView()
+                            } else {
+                                Text("Login")
                             }
                         }
-                        .disabled(appState.isLoading)
+                        .disabled(!canSubmit)
+
+                        if biometricAuthService.canAuthenticate() {
+                            Button("Login with Face ID / Touch ID") {
+                                Task {
+                                    await authenticateWithBiometrics()
+                                }
+                            }
+                            .disabled(appState.isLoading)
+                        }
                     }
                 }
             }
             .navigationTitle("Login")
+            .onAppear {
+                withAnimation(.spring(response: 0.55, dampingFraction: 0.78)) {
+                    didAnimateHeader = true
+                }
+            }
         }
+    }
+
+    private var loginHeader: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "lock.circle.fill")
+                .font(.system(size: 56))
+                .foregroundStyle(.tint)
+                .scaleEffect(didAnimateHeader ? 1 : 0.82)
+                .opacity(didAnimateHeader ? 1 : 0)
+
+            Text("Welcome Back")
+                .font(.title2.weight(.semibold))
+                .opacity(didAnimateHeader ? 1 : 0)
+
+            Text("Sign in to manage products")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .opacity(didAnimateHeader ? 1 : 0)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 24)
+        .padding(.bottom, 12)
+        .offset(y: didAnimateHeader ? 0 : 8)
     }
 
     private func authenticateWithBiometrics() async {
