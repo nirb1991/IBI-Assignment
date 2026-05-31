@@ -18,7 +18,7 @@ No third-party setup is required beyond Swift Package Manager resolving SnapKit.
 - Username: `admin`
 - Password: `1234`
 
-Biometric login is optional and only unlocks an existing Keychain-backed session. The first login must be done with username and password.
+Biometric unlock is optional and only unlocks an existing Keychain-backed session. The first login must be done with username and password. On a later app launch with a saved session, the app shows an explicit biometric unlock screen instead of automatically entering the product list.
 
 ## Architecture
 
@@ -72,7 +72,7 @@ IBI Ios Developer Assignment
 ## Main Features
 
 - Mock authentication with Keychain-backed session persistence.
-- Optional Face ID / Touch ID unlock for existing sessions.
+- Optional Face ID / Touch ID unlock for existing sessions on app relaunch.
 - Product list fetched from DummyJSON.
 - Pagination using `limit` and `skip`.
 - SwiftData product cache.
@@ -118,7 +118,7 @@ IBI Ios Developer Assignment
 - Search, sort, and filtering operate on products loaded so far.
 - Favorites can only display products currently available from the product repository/cache.
 - Language selection does not change system locale or localize the entire app.
-- Biometric login requires a previously stored Keychain session.
+- Biometric unlock requires a previously stored Keychain session and is not available after logout until the user logs in again with username and password.
 
 ## Testing Notes
 

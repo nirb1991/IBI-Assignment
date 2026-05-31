@@ -33,6 +33,10 @@ final class AppState: ObservableObject {
         isLoading = false
     }
 
+    func hasSavedSession() async -> Bool {
+        await authRepository.restoreSession() != nil
+    }
+
     func login(username: String, password: String) async {
         isLoading = true
         authenticationError = nil

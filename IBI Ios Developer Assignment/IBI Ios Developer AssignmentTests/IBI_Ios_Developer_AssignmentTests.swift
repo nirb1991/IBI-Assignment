@@ -9,6 +9,7 @@ import SwiftData
 import XCTest
 @testable import IBI_Ios_Developer_Assignment
 
+@MainActor
 final class MockAuthRepositoryTests: XCTestCase {
     func testLoginWithValidCredentialsReturnsAndStoresSession() async throws {
         let keychainService = KeychainService(service: "test.auth.success.\(UUID().uuidString)")
@@ -42,6 +43,10 @@ final class AppStateTests: XCTestCase {
         let repository = StubAuthRepository()
         repository.restoredSession = UserSession(username: "restored")
         let appState = AppState(authRepository: repository)
+
+        let hasSavedSession = await appState.hasSavedSession()
+        XCTAssertTrue(hasSavedSession)
+        XCTAssertFalse(appState.isAuthenticated)
 
         await appState.restoreSession()
         XCTAssertEqual(appState.userSession?.username, "restored")

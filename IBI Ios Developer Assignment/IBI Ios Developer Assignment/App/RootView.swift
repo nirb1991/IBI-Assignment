@@ -15,6 +15,7 @@ struct RootView: View {
 
     @State private var didRequestSessionRestore = false
     @State private var didFinishSessionRestore = false
+    @State private var hasSavedSession = false
 
     private var selectedColorScheme: ColorScheme? {
         let appearance = AppAppearance(rawValue: appearanceRawValue) ?? .system
@@ -36,10 +37,16 @@ struct RootView: View {
                     favoritesRepository: dependencies.favoritesRepository,
                     appState: appState
                 )
+            } else if hasSavedSession {
+                BiometricUnlockView(
+                    appState: appState,
+                    biometricAuthService: dependencies.biometricAuthService
+                )
             } else {
                 LoginView(
                     appState: appState,
-                    biometricAuthService: dependencies.biometricAuthService
+                    biometricAuthService: dependencies.biometricAuthService,
+                    showsBiometricLogin: false
                 )
             }
         }
@@ -47,8 +54,13 @@ struct RootView: View {
             guard !didRequestSessionRestore else { return }
 
             didRequestSessionRestore = true
-            await appState.restoreSession()
+            hasSavedSession = await appState.hasSavedSession()
             didFinishSessionRestore = true
+        }
+        .onChange(of: appState.isAuthenticated) { _, isAuthenticated in
+            if !isAuthenticated {
+                hasSavedSession = false
+            }
         }
         .preferredColorScheme(selectedColorScheme)
     }
