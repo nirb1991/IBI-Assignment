@@ -5,4 +5,42 @@
 //  Created by Nir Barzilay on 31/05/2026.
 //
 
-import Foundation
+import SwiftUI
+
+struct RootView: View {
+    @ObservedObject private var appState: AppState
+    private let dependencies: AppDependencies
+
+    @State private var didRequestSessionRestore = false
+    @State private var didFinishSessionRestore = false
+
+    init(dependencies: AppDependencies) {
+        self.dependencies = dependencies
+        appState = dependencies.appState
+    }
+
+    var body: some View {
+        Group {
+            if !didFinishSessionRestore {
+                ProgressView("Restoring session")
+            } else if appState.isAuthenticated {
+                ProductsListView(
+                    viewModel: dependencies.productsViewModel,
+                    favoritesRepository: dependencies.favoritesRepository
+                )
+            } else {
+                LoginView(
+                    appState: appState,
+                    biometricAuthService: dependencies.biometricAuthService
+                )
+            }
+        }
+        .task {
+            guard !didRequestSessionRestore else { return }
+
+            didRequestSessionRestore = true
+            await appState.restoreSession()
+            didFinishSessionRestore = true
+        }
+    }
+}

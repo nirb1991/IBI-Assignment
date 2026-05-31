@@ -21,17 +21,13 @@ final class SwiftDataProductRepository: ProductRepository {
     func fetchProducts() async throws -> [Product] {
         let cachedProducts = try fetchCachedProducts()
 
-        do {
-            let productDTOs = try await apiClient.fetchProducts()
-            try replaceCache(with: productDTOs)
-            return try fetchCachedProducts().map { $0.toDomainModel() }
-        } catch {
-            guard !cachedProducts.isEmpty else {
-                throw error
-            }
-
+        guard cachedProducts.isEmpty else {
             return cachedProducts.map { $0.toDomainModel() }
         }
+
+        let productDTOs = try await apiClient.fetchProducts()
+        try replaceCache(with: productDTOs)
+        return try fetchCachedProducts().map { $0.toDomainModel() }
     }
 
     func addProduct(_ product: Product) async throws {
@@ -101,4 +97,15 @@ final class SwiftDataProductRepository: ProductRepository {
 enum ProductRepositoryError: Error, Equatable {
     case productAlreadyExists
     case productNotFound
+}
+
+extension ProductRepositoryError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .productAlreadyExists:
+            return "A product with this ID already exists."
+        case .productNotFound:
+            return "The product could not be found."
+        }
+    }
 }

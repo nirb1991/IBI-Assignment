@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D4A1B2C3D4E5F6012345678B /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D4A1B2C3D4E5F6012345678A /* SnapKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C8B329732FCC08FC00803C28 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -47,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4A1B2C3D4E5F6012345678B /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,6 +111,7 @@
 			);
 			name = "IBI Ios Developer Assignment";
 			packageProductDependencies = (
+				D4A1B2C3D4E5F6012345678A /* SnapKit */,
 			);
 			productName = "IBI Ios Developer Assignment";
 			productReference = C8B329632FCC08FB00803C28 /* IBI Ios Developer Assignment.app */;
@@ -186,6 +192,9 @@
 			);
 			mainGroup = C8B3295A2FCC08FB00803C28;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D4A1B2C3D4E5F60123456789 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C8B329642FCC08FB00803C28 /* Products */;
 			projectDirPath = "";
@@ -571,6 +580,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D4A1B2C3D4E5F60123456789 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D4A1B2C3D4E5F6012345678A /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D4A1B2C3D4E5F60123456789 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C8B3295B2FCC08FB00803C28 /* Project object */;
 }

@@ -6,13 +6,12 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
+    @StateObject private var dependencies = AppDependencies()
 
     var body: some View {
-        Text("Hello, World!")
-            .padding()
+        RootView(dependencies: dependencies)
     }
 }
 

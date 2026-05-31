@@ -37,6 +37,7 @@ final class ProductsViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published private(set) var filteredProducts: [Product] = []
     @Published private(set) var isLoading = false
+    @Published private(set) var isResetting = false
     @Published private(set) var errorMessage: String?
 
     @Published var searchText = "" {
@@ -90,6 +91,68 @@ final class ProductsViewModel: ObservableObject {
         filterOption = option
     }
 
+    func makeCreateProductViewModel() -> ProductFormViewModel {
+        ProductFormViewModel(
+            mode: .create(nextID: nextProductID()),
+            productRepository: productRepository
+        ) { [weak self] product in
+            self?.products.append(product)
+            self?.applyFiltersAndSorting()
+        }
+    }
+
+    func makeEditProductViewModel(for product: Product) -> ProductFormViewModel {
+        ProductFormViewModel(
+            mode: .edit(product),
+            productRepository: productRepository
+        ) { [weak self] product in
+            guard let self else { return }
+
+            if let index = products.firstIndex(where: { $0.id == product.id }) {
+                products[index] = product
+            }
+
+            applyFiltersAndSorting()
+        }
+    }
+
+    func makeFavoritesViewModel(favoritesRepository: FavoritesRepository) -> FavoritesViewModel {
+        FavoritesViewModel(
+            productRepository: productRepository,
+            favoritesRepository: favoritesRepository
+        )
+    }
+
+    func deleteProduct(_ product: Product) async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            try await productRepository.deleteProduct(id: product.id)
+            products.removeAll { $0.id == product.id }
+            applyFiltersAndSorting()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+
+        isLoading = false
+    }
+
+    func resetLocalChangesFromAPI() async {
+        isResetting = true
+        errorMessage = nil
+
+        do {
+            try await productRepository.resetLocalChangesFromAPI()
+            products = try await productRepository.fetchProducts()
+            applyFiltersAndSorting()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+
+        isResetting = false
+    }
+
     private func applyFiltersAndSorting() {
         var result = products
 
@@ -115,5 +178,9 @@ final class ProductsViewModel: ObservableObject {
         }
 
         filteredProducts = result
+    }
+
+    private func nextProductID() -> Int {
+        (products.map(\.id).max() ?? 0) + 1
     }
 }
