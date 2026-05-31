@@ -136,3 +136,15 @@ Logout:
 - Remove session data
 - Remove biometric authentication state
 - Keep product cache
+
+## Application State Strategy
+
+AppState is responsible for authentication state and application startup flow.
+
+Responsibilities:
+- Restore session
+- Track authentication state
+- Control root navigation
+
+Reason:
+Provides a single source of truth for app-level state.

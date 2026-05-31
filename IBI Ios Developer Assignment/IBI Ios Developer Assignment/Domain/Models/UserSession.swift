@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserSession: Equatable {
+struct UserSession: Codable, Equatable {
     let username: String
     let isLoggedIn: Bool
 }

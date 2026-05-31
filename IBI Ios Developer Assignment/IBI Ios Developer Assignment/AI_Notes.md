@@ -9,3 +9,6 @@ Help me design a clean MVVM architecture for an iOS take-home assignment that in
 
 # Prompt 2
 Design a secure iOS authentication flow using Keychain and Face ID for a take-home assignment with mocked authentication.
+
+# Prompt 3
+Create a production-ready KeychainService for Swift that can store, retrieve and delete Codable objects using async/await where appropriate.
