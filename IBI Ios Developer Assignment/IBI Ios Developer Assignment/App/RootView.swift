@@ -9,10 +9,17 @@ import SwiftUI
 
 struct RootView: View {
     @ObservedObject private var appState: AppState
+    @AppStorage("app_appearance") private var appearanceRawValue = AppAppearance.system.rawValue
+
     private let dependencies: AppDependencies
 
     @State private var didRequestSessionRestore = false
     @State private var didFinishSessionRestore = false
+
+    private var selectedColorScheme: ColorScheme? {
+        let appearance = AppAppearance(rawValue: appearanceRawValue) ?? .system
+        return appearance.colorScheme
+    }
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -26,7 +33,8 @@ struct RootView: View {
             } else if appState.isAuthenticated {
                 ProductsListView(
                     viewModel: dependencies.productsViewModel,
-                    favoritesRepository: dependencies.favoritesRepository
+                    favoritesRepository: dependencies.favoritesRepository,
+                    appState: appState
                 )
             } else {
                 LoginView(
@@ -42,5 +50,6 @@ struct RootView: View {
             await appState.restoreSession()
             didFinishSessionRestore = true
         }
+        .preferredColorScheme(selectedColorScheme)
     }
 }

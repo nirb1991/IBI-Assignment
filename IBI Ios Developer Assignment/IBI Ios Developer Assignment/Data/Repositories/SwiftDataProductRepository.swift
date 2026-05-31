@@ -25,9 +25,50 @@ final class SwiftDataProductRepository: ProductRepository {
             return cachedProducts.map { $0.toDomainModel() }
         }
 
-        let productDTOs = try await apiClient.fetchProducts()
-        try replaceCache(with: productDTOs)
+        let response = try await apiClient.fetchProducts()
+        try upsertCache(with: response.products)
         return try fetchCachedProducts().map { $0.toDomainModel() }
+    }
+
+    func fetchProductsPage(limit: Int, skip: Int) async throws -> ProductsPage {
+        let cachedProducts = try fetchCachedProducts()
+
+        if skip == 0, !cachedProducts.isEmpty {
+            let products = cachedProducts.map { $0.toDomainModel() }
+            return ProductsPage(
+                products: products,
+                total: products.count + (products.count >= limit ? limit : 0),
+                skip: 0,
+                limit: limit,
+                isFromCache: true
+            )
+        }
+
+        do {
+            let response = try await apiClient.fetchProducts(limit: limit, skip: skip)
+            try upsertCache(with: response.products)
+
+            return ProductsPage(
+                products: response.products.map { $0.toDomainModel() },
+                total: response.total,
+                skip: response.skip,
+                limit: response.limit,
+                isFromCache: false
+            )
+        } catch {
+            guard skip == 0, !cachedProducts.isEmpty else {
+                throw error
+            }
+
+            let products = cachedProducts.map { $0.toDomainModel() }
+            return ProductsPage(
+                products: products,
+                total: products.count,
+                skip: 0,
+                limit: limit,
+                isFromCache: true
+            )
+        }
     }
 
     func addProduct(_ product: Product) async throws {
@@ -58,7 +99,7 @@ final class SwiftDataProductRepository: ProductRepository {
     }
 
     func resetLocalChangesFromAPI() async throws {
-        let productDTOs = try await apiClient.fetchProducts()
+        let productDTOs = try await fetchAllProductDTOs()
         try replaceCache(with: productDTOs)
     }
 
@@ -91,6 +132,53 @@ final class SwiftDataProductRepository: ProductRepository {
         }
 
         try modelContext.save()
+    }
+
+    private func fetchAllProductDTOs(pageSize: Int = 20) async throws -> [ProductDTO] {
+        var skip = 0
+        var allProducts: [ProductDTO] = []
+        var total = Int.max
+
+        while allProducts.count < total {
+            let response = try await apiClient.fetchProducts(limit: pageSize, skip: skip)
+            allProducts.append(contentsOf: response.products)
+            total = response.total
+            skip += response.limit
+
+            if response.products.isEmpty {
+                break
+            }
+        }
+
+        return allProducts
+    }
+
+    private func upsertCache(with productDTOs: [ProductDTO]) throws {
+        for productDTO in productDTOs {
+            if let cachedProduct = try cachedProduct(id: productDTO.id) {
+                cachedProduct.update(with: productDTO)
+            } else {
+                modelContext.insert(CachedProduct(dto: productDTO))
+            }
+        }
+
+        try modelContext.save()
+    }
+}
+
+private extension ProductDTO {
+    func toDomainModel() -> Product {
+        Product(
+            id: id,
+            title: title,
+            description: description,
+            price: price,
+            category: category,
+            brand: brand,
+            rating: rating,
+            thumbnail: thumbnail,
+            images: images
+        )
     }
 }
 

@@ -22,18 +22,29 @@ struct ProductAPIClient {
         self.productsURL = productsURL
     }
 
-    func fetchProducts() async throws -> [ProductDTO] {
-        let (data, response) = try await session.data(from: productsURL)
+    func fetchProducts(limit: Int = 20, skip: Int = 0) async throws -> ProductsResponseDTO {
+        var components = URLComponents(url: productsURL, resolvingAgainstBaseURL: false)
+        components?.queryItems = [
+            URLQueryItem(name: "limit", value: String(limit)),
+            URLQueryItem(name: "skip", value: String(skip))
+        ]
+
+        guard let url = components?.url else {
+            throw ProductAPIError.invalidURL
+        }
+
+        let (data, response) = try await session.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse,
               (200..<300).contains(httpResponse.statusCode) else {
             throw ProductAPIError.invalidResponse
         }
 
-        return try decoder.decode(ProductsResponseDTO.self, from: data).products
+        return try decoder.decode(ProductsResponseDTO.self, from: data)
     }
 }
 
 enum ProductAPIError: Error, Equatable {
+    case invalidURL
     case invalidResponse
 }

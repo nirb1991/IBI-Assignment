@@ -37,6 +37,8 @@ final class ProductsViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published private(set) var filteredProducts: [Product] = []
     @Published private(set) var isLoading = false
+    @Published private(set) var isLoadingNextPage = false
+    @Published private(set) var hasMoreProducts = true
     @Published private(set) var isResetting = false
     @Published private(set) var errorMessage: String?
 
@@ -64,23 +66,61 @@ final class ProductsViewModel: ObservableObject {
     }
 
     private let productRepository: ProductRepository
+    private let pageSize: Int
 
-    init(productRepository: ProductRepository) {
+    init(productRepository: ProductRepository, pageSize: Int = 20) {
         self.productRepository = productRepository
+        self.pageSize = pageSize
     }
 
     func loadProducts() async {
+        guard !isLoading else { return }
+
         isLoading = true
         errorMessage = nil
+        hasMoreProducts = true
 
         do {
-            products = try await productRepository.fetchProducts()
+            let page = try await productRepository.fetchProductsPage(
+                limit: pageSize,
+                skip: 0
+            )
+            products = page.products
+            hasMoreProducts = page.isFromCache
+                ? products.count >= pageSize
+                : page.skip + page.products.count < page.total
             applyFiltersAndSorting()
         } catch {
             errorMessage = error.localizedDescription
         }
 
         isLoading = false
+    }
+
+    func loadNextPageIfNeeded(currentProduct product: Product) async {
+        guard shouldLoadNextPage(currentProduct: product) else { return }
+        await loadNextPage()
+    }
+
+    func loadNextPage() async {
+        guard hasMoreProducts, !isLoading, !isLoadingNextPage else { return }
+
+        isLoadingNextPage = true
+        errorMessage = nil
+
+        do {
+            let page = try await productRepository.fetchProductsPage(
+                limit: pageSize,
+                skip: products.count
+            )
+            mergeProducts(page.products)
+            hasMoreProducts = page.skip + page.products.count < page.total
+            applyFiltersAndSorting()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+
+        isLoadingNextPage = false
     }
 
     func setSortOption(_ option: SortOption) {
@@ -144,13 +184,40 @@ final class ProductsViewModel: ObservableObject {
 
         do {
             try await productRepository.resetLocalChangesFromAPI()
-            products = try await productRepository.fetchProducts()
+            let page = try await productRepository.fetchProductsPage(
+                limit: pageSize,
+                skip: 0
+            )
+            products = page.products
+            hasMoreProducts = page.skip + page.products.count < page.total
             applyFiltersAndSorting()
         } catch {
             errorMessage = error.localizedDescription
         }
 
         isResetting = false
+    }
+
+    private func shouldLoadNextPage(currentProduct product: Product) -> Bool {
+        guard hasMoreProducts,
+              !isLoading,
+              !isLoadingNextPage,
+              let index = filteredProducts.firstIndex(where: { $0.id == product.id }) else {
+            return false
+        }
+
+        let thresholdIndex = max(filteredProducts.count - 5, 0)
+        return index >= thresholdIndex
+    }
+
+    private func mergeProducts(_ newProducts: [Product]) {
+        for product in newProducts {
+            if let index = products.firstIndex(where: { $0.id == product.id }) {
+                products[index] = product
+            } else {
+                products.append(product)
+            }
+        }
     }
 
     private func applyFiltersAndSorting() {

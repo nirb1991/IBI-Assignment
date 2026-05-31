@@ -15,10 +15,16 @@ struct ProductsListView: View {
     @State private var isResetConfirmationPresented = false
 
     private let favoritesRepository: FavoritesRepository
+    private let appState: AppState
 
-    init(viewModel: ProductsViewModel, favoritesRepository: FavoritesRepository) {
+    init(
+        viewModel: ProductsViewModel,
+        favoritesRepository: FavoritesRepository,
+        appState: AppState
+    ) {
         _viewModel = StateObject(wrappedValue: viewModel)
         self.favoritesRepository = favoritesRepository
+        self.appState = appState
     }
 
     var body: some View {
@@ -38,6 +44,7 @@ struct ProductsListView: View {
 
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         favoritesLink
+                        settingsLink
                         categoryFilterMenu
                         sortMenu
                         resetButton
@@ -112,28 +119,43 @@ struct ProductsListView: View {
         } else if viewModel.filteredProducts.isEmpty {
             EmptyProductsStateView()
         } else {
-            List(viewModel.filteredProducts) { product in
-                NavigationLink {
-                    ProductDetailsView(
-                        product: product,
-                        favoritesRepository: favoritesRepository
-                    )
-                } label: {
-                    ProductRowView(product: product)
-                }
-                .swipeActions(edge: .trailing) {
-                    Button(role: .destructive) {
-                        productToDelete = product
+            List {
+                ForEach(viewModel.filteredProducts) { product in
+                    NavigationLink {
+                        ProductDetailsView(
+                            product: product,
+                            favoritesRepository: favoritesRepository
+                        )
                     } label: {
-                        Label("Delete", systemImage: "trash")
+                        ProductRowView(product: product)
                     }
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            productToDelete = product
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
 
-                    Button {
-                        productToEdit = product
-                    } label: {
-                        Label("Edit", systemImage: "pencil")
+                        Button {
+                            productToEdit = product
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        .tint(.blue)
                     }
-                    .tint(.blue)
+                    .onAppear {
+                        Task {
+                            await viewModel.loadNextPageIfNeeded(currentProduct: product)
+                        }
+                    }
+                }
+
+                if viewModel.isLoadingNextPage {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
                 }
             }
             .overlay(alignment: .bottom) {
@@ -181,6 +203,17 @@ struct ProductsListView: View {
             Image(systemName: "heart")
         }
         .accessibilityLabel("Favorites")
+    }
+
+    private var settingsLink: some View {
+        NavigationLink {
+            SettingsView(
+                viewModel: SettingsViewModel(appState: appState)
+            )
+        } label: {
+            Image(systemName: "gearshape")
+        }
+        .accessibilityLabel("Settings")
     }
 
     private var categoryFilterMenu: some View {
