@@ -39,7 +39,7 @@ struct KeychainService {
         case errSecSuccess:
             return
         case errSecItemNotFound:
-            var addQuery = query
+            var addQuery = query 
             addQuery[kSecValueData as String] = data
 
             let addStatus = SecItemAdd(addQuery as CFDictionary, nil)

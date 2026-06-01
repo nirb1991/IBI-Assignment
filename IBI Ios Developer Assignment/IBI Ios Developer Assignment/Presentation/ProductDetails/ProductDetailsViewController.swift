@@ -50,12 +50,16 @@ final class ProductDetailsViewController: UIViewController {
         imageTasks.forEach { $0.cancel() }
     }
 
-    private func configureView() {
+}
+
+private extension ProductDetailsViewController {
+    
+    func configureView() {
         view.backgroundColor = .systemBackground
         title = L10n.tr("productDetails.title")
     }
 
-    private func configureHierarchy() {
+    func configureHierarchy() {
         contentStackView.axis = .vertical
         contentStackView.spacing = 16
         contentStackView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: 24, right: 16)
@@ -105,7 +109,7 @@ final class ProductDetailsViewController: UIViewController {
         }
     }
 
-    private func configureContent() {
+    func configureContent() {
         let product = viewModel.product
 
         titleLabel.text = product.title
@@ -130,7 +134,7 @@ final class ProductDetailsViewController: UIViewController {
         updateFavoriteButton(isFavorite: viewModel.isFavorite)
     }
 
-    private func configureImages() {
+    func configureImages() {
         let imageURLs = viewModel.product.images.isEmpty
             ? [viewModel.product.thumbnail]
             : viewModel.product.images
@@ -150,7 +154,7 @@ final class ProductDetailsViewController: UIViewController {
         }
     }
 
-    private func loadImage(from imageURLString: String, into imageView: UIImageView) {
+    func loadImage(from imageURLString: String, into imageView: UIImageView) {
         guard let url = URL(string: imageURLString) else {
             imageView.image = UIImage(systemName: "photo")
             return
@@ -171,13 +175,13 @@ final class ProductDetailsViewController: UIViewController {
         task.resume()
     }
 
-    private func bindViewModel() {
+    func bindViewModel() {
         viewModel.onFavoriteStateChanged = { [weak self] isFavorite in
             self?.updateFavoriteButton(isFavorite: isFavorite)
         }
     }
 
-    private func updateFavoriteButton(isFavorite: Bool) {
+    func updateFavoriteButton(isFavorite: Bool) {
         var configuration = favoriteButton.configuration ?? .borderedProminent()
         configuration.title = isFavorite ? L10n.tr("productDetails.removeFavorite") : L10n.tr("productDetails.addFavorite")
         configuration.image = UIImage(systemName: isFavorite ? "heart.fill" : "heart")
@@ -185,7 +189,7 @@ final class ProductDetailsViewController: UIViewController {
         favoriteButton.configuration = configuration
     }
 
-    private func detailText(title: String, value: String) -> NSAttributedString {
+    func detailText(title: String, value: String) -> NSAttributedString {
         let result = NSMutableAttributedString(
             string: "\(title): ",
             attributes: [.font: UIFont.preferredFont(forTextStyle: .headline)]
@@ -195,7 +199,7 @@ final class ProductDetailsViewController: UIViewController {
     }
 
     @objc
-    private func favoriteButtonTapped() {
+    func favoriteButtonTapped() {
         Task {
             await viewModel.toggleFavorite()
         }
